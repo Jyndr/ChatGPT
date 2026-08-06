@@ -2,6 +2,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import cookieparser from "cookie-parser"
 import User from "../model/UserSchema.js"
+import { signupSchema, loginSchema } from "../validators/userValidator.js"
 
 
 // writing all the api of the users here
@@ -28,15 +29,18 @@ const cookieOptions = {
 
 export const SignUp = async (req, res) => {
     try {
-        const { name, age, email, password } = req.body;
 
-        if (!name || !email || !password) {
+        const result = signupSchema.safeParse(req.body);
+
+        if (!result.success) {
             return res.status(400).json({
-                message: "missing details"
+                message: result.error.issues[0].message
             })
         }
 
-        const user = User.findOne({ email: email });
+        const { name, age, email, password } = result.data;
+
+        const user = await User.findOne({ email: email });
 
         if (user) {
             return res.status(409).json({
@@ -47,7 +51,7 @@ export const SignUp = async (req, res) => {
         const hashedPass = bcrypt.hash(password, 12);
 
 
-        const new_user = User.create({
+        const new_user = await User.create({
             name,
             age,
             email,
@@ -73,15 +77,18 @@ export const SignUp = async (req, res) => {
 export const login = async (req, res) => {
 
     try {
-        const { email, password } = req.body;
 
-        if (!email || !password) {
+        const result = loginSchema.safeParse(req.body);
+
+        if (!result.success) {
             return res.status(400).json({
-                message: "missing details"
+                message: result.error.issues[0].message
             })
         }
 
-        const user = User.findOne({ email });
+        const { email, password } = result.data;
+
+        const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(404).json({
