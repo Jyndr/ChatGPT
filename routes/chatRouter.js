@@ -10,7 +10,7 @@ chatRouter.use(authUserMiddleware);
 
 chatRouter.post("createChat", createChat);
 chatRouter.get("getRecentChat", getRecentChat);
-chatRouter.get("getSingleChat", getSingleChat);
-chatRouter.delete("deleteChat", deleteChat);
+chatRouter.get("/:chatId", getSingleChat);
+chatRouter.delete("/:chatId", deleteChat);
 
 export default chatRouter;
