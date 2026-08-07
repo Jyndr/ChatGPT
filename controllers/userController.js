@@ -3,6 +3,9 @@ import jwt from "jsonwebtoken"
 import cookieparser from "cookie-parser"
 import User from "../model/UserSchema.js"
 import { signupSchema, loginSchema } from "../validators/userValidator.js"
+import msg from "../model/msgSchema.js"
+import chat from "../model/ChatSchema.js"
+import user from "../model/UserSchema.js"
 
 
 // writing all the api of the users here
@@ -158,3 +161,31 @@ export const profile = async (res, res) => { // dbt
     }
 }
 
+
+export const deleteAccount = async (req, res) => {
+    try {
+
+        const userId = req.user._id;
+
+        msg.deleteMany({ userId });
+
+        chat.deleteMany({ userId });
+
+        user.deleteOne({ userId });
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: false
+        });
+
+        res.status(200).json({
+            message: "Account deleted Successfully"
+        })
+
+    } catch (error) {
+        console.log(err);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
