@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
 
         ResetAt: {
             type: Date,
-            default: () => new Date(Date.now() + process.env.TokenTime),
+            default: () => new Date(Date.now() + Number(process.env.TokenTime)),
         },
 
         TotalTokenUsed: {

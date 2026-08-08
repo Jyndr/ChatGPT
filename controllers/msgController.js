@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 import Chat from "../model/ChatSchema.js"
 import msg from "../model/msgSchema.js"
 
@@ -11,13 +11,13 @@ export const getMessage = async (req, res) => {
         const { chatId } = req.params;
 
         const chat = await Chat.findOne({
-            chatId,
+            _id: chatId,
             userId: req.user._id
         })
 
 
         if (!chat) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "Chat not found"
             })
         }
@@ -72,7 +72,7 @@ export const sendMessage = async (req, res) => {
 
             chat = await Chat.findOne({
                 userId: req.user._id,
-                chatId
+                _id:chatId
             })
 
             if (!chat) {
@@ -115,7 +115,7 @@ export const sendMessage = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(err);
+        console.log(error);
         res.status(500).json({
             message: "Internal Server Error"
         })

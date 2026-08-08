@@ -8,12 +8,18 @@ const authUserMiddleware = async (req, res, next) => {
 
         const { token } = req.cookies;
 
+        if (!token) {
+            return res.status(401).json({
+                message: "login first"
+            })
+        }
+
         const payload = jwt.verify(token, process.env.JWT_key);
 
         const user = await User.findById(payload.id);
 
         if (!user) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "User not found"
             })
         }
@@ -28,6 +34,5 @@ const authUserMiddleware = async (req, res, next) => {
         })
     }
 }
-
 
 export default authUserMiddleware;

@@ -8,7 +8,7 @@ import msg from "../model/msgSchema.js"
 export const getRecentChat = async (req, res) => {
     try {
 
-        const chats = Chat.find({ userId: req.user._id }).select("topic")
+        const chats = await Chat.find({ userId: req.user._id }).select("topic")
             .sort({ updatedAt: -1 }).limit(20);
 
         res.status(200).json({
@@ -31,10 +31,10 @@ export const getSingleChat = async (req, res) => {
 
         const { chatId } = req.params;
 
-        const chat = Chat.findOne({ _id: chatId, userId: req.user._id });
+        const chat = await Chat.findOne({ _id: chatId, userId: req.user._id });
 
         if (!chat) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "Sorry no chat found"
             })
         }
@@ -42,7 +42,7 @@ export const getSingleChat = async (req, res) => {
         res.status(200).json({
             chatId: chat._id,
             userId: chat.userId,
-            topic: chat.topic
+            topic: chat.Topic
         })
 
     } catch (error) {
@@ -71,7 +71,7 @@ export const createChat = async (req, res) => {
         res.status(200).json({
             chatid: chat._id,
             userId: chat.userId,
-            topic: chat.topic
+            topic: chat.Topic
         })
 
     } catch (error) {
@@ -86,7 +86,7 @@ export const createChat = async (req, res) => {
 export const deleteChat = async (req, res) => {
     try {
 
-        const { chatId } = req.body;
+        const { chatId } = req.params;
 
         const chat = Chat.find({ _id: chatId, userId: req.user._id });
 

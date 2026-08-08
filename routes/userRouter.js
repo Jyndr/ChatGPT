@@ -1,5 +1,5 @@
 import express from "express"
-import { login, SignUp, profile, logout } from "../controllers/userController.js"
+import { login, SignUp, profile, logout, deleteAccount } from "../controllers/userController.js"
 import authUserMiddleware from "../middlewares/authUserMiddleware.js"
 
 
@@ -11,6 +11,6 @@ userRouter.post("/signup", SignUp);
 userRouter.post("/login", login);
 userRouter.post("/logout", logout);
 userRouter.get("/profile", authUserMiddleware, profile);
-
+userRouter.delete("/delete" , authUserMiddleware , deleteAccount);
 
 export default userRouter;

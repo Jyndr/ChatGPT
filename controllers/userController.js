@@ -26,7 +26,7 @@ const CreateToken = (id, email) => {
 const cookieOptions = {
     httpOnly: true,
     secure: false,
-    maxAge: process.env.TokenTime
+    maxAge: 1000 * 60 * 60 * 5 // bug
 }
 
 
@@ -51,7 +51,7 @@ export const SignUp = async (req, res) => {
             })
         }
 
-        const hashedPass = bcrypt.hash(password, 12);
+        const hashedPass = await bcrypt.hash(password, 12);
 
 
         const new_user = await User.create({
@@ -112,7 +112,9 @@ export const login = async (req, res) => {
         res.cookie("token", token, cookieOptions);
 
         res.status(200).json({
-            message: "User loggedIn successfully"
+            message: "User loggedIn successfully",
+            name: user.name,
+            email: user.email
         })
 
     } catch (err) {
@@ -143,7 +145,7 @@ export const logout = async (req, res) => {
     }
 }
 
-export const profile = async (res, res) => { // dbt
+export const profile = async (req, res) => { // dbt
     try {
 
         res.status(200).json({
@@ -164,14 +166,14 @@ export const profile = async (res, res) => { // dbt
 
 export const deleteAccount = async (req, res) => {
     try {
-
+        // dbt 
         const userId = req.user._id;
 
-        msg.deleteMany({ userId });
+        await msg.deleteMany({ userId });
 
-        chat.deleteMany({ userId });
+        await chat.deleteMany({ userId });
 
-        user.deleteOne({ userId });
+        await user.deleteOne({ _id: userId });
 
         res.clearCookie("token", {
             httpOnly: true,

@@ -6,7 +6,7 @@ import authUserMiddleware from "../middlewares/authUserMiddleware.js";
 const msgRouter = express.Router();
 msgRouter.use(authUserMiddleware);
 
-msgRouter.get("/:chatID", getMessage);
+msgRouter.get("/:chatId", getMessage);
 msgRouter.post("/:chatId", sendMessage);
 
 export default msgRouter;
