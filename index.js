@@ -1,14 +1,11 @@
 import express from "express"
 import ConnectDB from "./config/database.js"
-import dotenv from "dotenv"
+import dotenv from "dotenv/config"
 import cookieParser from "cookie-parser"
 import userRouter from "./routes/userRouter.js"
 import msgRouter from "./routes/msgRouter.js"
 import chatRouter from "./routes/chatRouter.js"
 
-
-// dbt 
-dotenv.config();
 
 const app = express();
 

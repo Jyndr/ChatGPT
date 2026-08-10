@@ -1,6 +1,11 @@
 import { z } from "zod";
 import Chat from "../model/ChatSchema.js"
 import msg from "../model/msgSchema.js"
+import { resetUsageifNeeded, hasTokenLimitReached, addTokenUsage } from "../utils/userUsage.js";
+import { buildMessageForAi } from "../utils/chatContext.js";
+import { genAIresponse } from "../services/openRouterservice.js";
+import { addChatTokenUsage } from "../utils/ChatToken.js";
+import { UpdateSummaryIfNeeded } from "../services/summaryService.js";
 
 // getMessage, sendMessage
 
@@ -30,7 +35,7 @@ export const getMessage = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(err);
+        console.log(error);
         res.status(500).json({
             message: "Internal Server Error"
         })
@@ -56,6 +61,15 @@ export const sendMessage = async (req, res) => {
             })
         }
 
+        await resetUsageifNeeded(req.user);
+
+        if (hasTokenLimitReached(req.user)) {
+            return res.status(429).json({
+                message: "Token limit reached  , pls try after some time",
+                usage: req.user.usage
+            })
+        }
+
         let chat;
 
 
@@ -72,16 +86,30 @@ export const sendMessage = async (req, res) => {
 
             chat = await Chat.findOne({
                 userId: req.user._id,
-                _id:chatId
+                _id: chatId
             })
 
             if (!chat) {
-                res.status(400).json({
+                return res.status(400).json({
                     message: "Chat not found"
                 })
             }
 
         }
+
+        const oldMessages = await msg.find({ chatId: chat._id })
+            .sort({ createdAt: 1 })
+            .skip(chat.summarizedTillmessageNumber);
+
+
+        const msg_for_ai = await buildMessageForAi({
+            chat,
+            oldMessages,
+            currentMessages: content.trim()
+        });
+
+
+        const { ai_reply, usage } = await genAIresponse({ model, messages: msg_for_ai });
 
         const userMessage = await msg.create({
             chatId: chat._id,
@@ -89,9 +117,6 @@ export const sendMessage = async (req, res) => {
             role: "user",
             content: content.trim()
         })
-
-        //dummy ai reply
-        const ai_reply = "ha bhai kesa hai"
 
         const assistantMessage = await msg.create({
             chatId: chat._id,
@@ -103,8 +128,13 @@ export const sendMessage = async (req, res) => {
 
         chat.messageCount += 2;
 
-        // dbt
-        await chat.save();
+        if (chat.Topic == "New Chat") {
+            chat.Topic = content.trim().slice(0, 40);
+        }
+
+        await addChatTokenUsage(chat, usage);
+        await addTokenUsage(req.user, usage.total_tokens);
+
 
         res.status(201).json({
             message: "message sent successfully",
@@ -113,6 +143,8 @@ export const sendMessage = async (req, res) => {
             userMessage,
             assistantMessage
         })
+
+        UpdateSummaryIfNeeded(chat._id);
 
     } catch (error) {
         console.log(error);
