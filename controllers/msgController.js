@@ -3,7 +3,7 @@ import Chat from "../model/ChatSchema.js"
 import msg from "../model/msgSchema.js"
 import { resetUsageifNeeded, hasTokenLimitReached, addTokenUsage } from "../utils/userUsage.js";
 import { buildMessageForAi } from "../utils/chatContext.js";
-import { genAIresponse } from "../services/openRouterservice.js";
+import { genAIresponse } from "../services/geminiRouterService.js";
 import { addChatTokenUsage } from "../utils/ChatToken.js";
 import { UpdateSummaryIfNeeded } from "../services/summaryService.js";
 

@@ -20,17 +20,17 @@ const chatSchema = new mongoose.Schema({
 
     summary: {
         type: String,
-        dafault: ""
+        default: ""
     },
 
     summaryUpdatedAt: {
         type: Date,
-        dafault: null
+        default: null
     },
 
     summarizedTillmessageNumber: {
         type: Number,
-        dafault: 0
+        default: 0
     },
 
     messageCount: {

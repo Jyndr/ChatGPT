@@ -1,14 +1,14 @@
 import Chat from "../model/ChatSchema.js"
 import Msg from "../model/msgSchema.js"
 import User from "../model/UserSchema.js"
-import { genAIresponse } from "./openRouterservice.js"
+import { genAIresponse } from "../services/geminiRouterService.js"
 
 
 const summary_chunk_size = 20;
 
 export const UpdateSummaryIfNeeded = async (chatId) => {
 
-    const chat = Chat.findById(chatId);
+    const chat = await Chat.findById(chatId);
 
     if (!chat) {
         return;
@@ -68,7 +68,7 @@ export const UpdateSummaryIfNeeded = async (chatId) => {
     const user = await User.findById(chat.userId);
 
 
-    if(user){
+    if (user) {
         user.usage.TokenUsed += usage.total_tokens;
         user.usage.TotalTokenUsed += usage.total_tokens;
         await user.save();
