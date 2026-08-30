@@ -1,16 +1,18 @@
 import express from "express"
 import { login, SignUp, profile, logout, deleteAccount } from "../controllers/userController.js"
 import authUserMiddleware from "../middlewares/authUserMiddleware.js"
+import unauthenticatedRateLimiter from "../middlewares/unauthenticatedRateLimiter.js";
+import authenticatedRateLimiter from "../middlewares/authenticatedRateLimiter.js";
 
 
 const userRouter = express.Router();
 
 
 //dbt
-userRouter.post("/signup", SignUp);
-userRouter.post("/login", login);
-userRouter.post("/logout", logout);
-userRouter.get("/profile", authUserMiddleware, profile);
-userRouter.delete("/delete" , authUserMiddleware , deleteAccount);
+userRouter.post("/signup", unauthenticatedRateLimiter, SignUp);
+userRouter.post("/login", unauthenticatedRateLimiter, login);
+userRouter.post("/logout", authenticatedRateLimiter, logout);
+userRouter.get("/profile", authenticatedRateLimiter, authUserMiddleware, profile);
+userRouter.delete("/delete", authenticatedRateLimiter, authUserMiddleware, deleteAccount);
 
 export default userRouter;
