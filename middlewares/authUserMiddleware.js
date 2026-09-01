@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import User from "../model/UserSchema.js"
+import { redisClient } from "../config/redis.js";
 
 
 // dbt
@@ -16,15 +17,18 @@ const authUserMiddleware = async (req, res, next) => {
 
         const payload = jwt.verify(token, process.env.JWT_key);
 
-        const user = await User.findById(payload.id);
+        const blockedToken = await redisClient.get(
+            `blocklist:${token}`
+        );
 
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found"
-            })
+        if (blockedToken) {
+            return res.status(401).json({
+                message: "Please login again"
+            });
         }
-
-        req.user = user;
+        req.userID = payload.id;
+        req.token = token;
+        req.payload = payload;
         next();
 
     } catch (err) {

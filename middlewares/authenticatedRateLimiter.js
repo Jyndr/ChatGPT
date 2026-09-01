@@ -3,7 +3,7 @@ import { redisClient } from "../config/redis.js";
 
 export const authenticatedRateLimiter = async (req, res, next) => {
     try {
-        const userID = req.user._id.toString();
+        const userID = req.userID;
         const key = `rate-limit:user:${userID}`;
 
         const req_cnt = await redisClient.incr(key);
@@ -18,8 +18,8 @@ export const authenticatedRateLimiter = async (req, res, next) => {
                 message: `Too many request try after ${remaining_time} seconds`
             });
         }
-
         next();
+
     } catch (error) {
         console.log("unauthenticated Rate Limiter Error", error);
         next();

@@ -6,6 +6,7 @@ import { signupSchema, loginSchema } from "../validators/userValidator.js"
 import msg from "../model/msgSchema.js"
 import chat from "../model/ChatSchema.js"
 import user from "../model/UserSchema.js"
+import { redisClient } from "../config/redis.js"
 
 
 // writing all the api of the users here
@@ -127,15 +128,27 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
+        if (req.token) {
+            const curr_time = Math.floor(Date.now() / 1000);
+            const remaining_time = req.payload.expiresIn - curr_time;
+            if (remaining_time > 0) {
+                await redisClient.create(
+                    `Blocked:${token}`, "blocked",
+                    {
+                        EX: remaining_time
+                    }
+                )
+            }
 
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: false
-        })
+            res.clearCookie("token", {
+                httpOnly: true,
+                secure: false
+            })
 
-        res.status(200).json({
-            message: "User logged Out succussfully"
-        })
+            res.status(200).json({
+                message: "User logged Out succussfully"
+            })
+        }
 
     } catch (err) {
         console.log(err);
