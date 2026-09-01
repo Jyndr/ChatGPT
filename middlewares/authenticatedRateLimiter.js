@@ -13,7 +13,7 @@ export const authenticatedRateLimiter = async (req, res, next) => {
         }
 
         if (req_cnt > 20) {
-            const remaining_time = redisClient.ttl(key);
+            const remaining_time = await redisClient.ttl(key);
             return res.status(429).json({
                 message: `Too many request try after ${remaining_time} seconds`
             });
