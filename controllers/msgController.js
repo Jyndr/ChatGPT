@@ -115,14 +115,29 @@ export const sendMessage = async (req, res) => {
             chatId: chat._id,
             userId: req.user._id,
             role: "user",
-            content: content.trim()
+            content: content.trim(),
+            tokens: usage.prompt_token,
+
+            usage: {
+                promptTokens: usage.prompt_token,
+                completionToken: 0,
+                TotalTokens: usage.prompt_token
+            }
         })
 
         const assistantMessage = await msg.create({
             chatId: chat._id,
             userId: req.user._id,
             role: "assistant",
-            content: ai_reply
+            content: ai_reply,
+            tokens: usage.prompt_token,
+            tokens: usage.completion_token,
+
+            usage: {
+                promptTokens: 0,
+                completionToken: usage.completion_token,
+                TotalTokens: usage.completion_token
+            }
         })
 
 
