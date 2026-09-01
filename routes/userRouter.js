@@ -12,7 +12,7 @@ const userRouter = express.Router();
 userRouter.post("/signup", unauthenticatedRateLimiter, SignUp);
 userRouter.post("/login", unauthenticatedRateLimiter, login);
 userRouter.post("/logout", authenticatedRateLimiter, logout);
-userRouter.get("/profile", authenticatedRateLimiter, authUserMiddleware, profile);
-userRouter.delete("/delete", authenticatedRateLimiter, authUserMiddleware, deleteAccount);
+userRouter.get("/profile", authUserMiddleware, authenticatedRateLimiter, profile);
+userRouter.delete("/delete", authUserMiddleware, authenticatedRateLimiter, deleteAccount);
 
 export default userRouter;
