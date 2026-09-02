@@ -180,7 +180,7 @@ export const profile = async (req, res) => { // dbt
 export const deleteAccount = async (req, res) => {
     try {
         // dbt 
-        const userId = req.user._id;
+        const userId = req.userID;
 
         await msg.deleteMany({ userId });
 

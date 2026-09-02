@@ -19,7 +19,6 @@ export const authenticatedRateLimiter = async (req, res, next) => {
             });
         }
         next();
-
     } catch (error) {
         console.log("unauthenticated Rate Limiter Error", error);
         next();

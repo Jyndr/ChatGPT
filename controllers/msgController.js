@@ -1,11 +1,14 @@
 import { z } from "zod";
 import Chat from "../model/ChatSchema.js"
 import msg from "../model/msgSchema.js"
-import { resetUsageifNeeded, hasTokenLimitReached, addTokenUsage } from "../utils/userUsage.js";
+import { addTokenUsage } from "../utils/userUsage.js";
 import { buildMessageForAi } from "../utils/chatContext.js";
 import { genAIresponse } from "../services/geminiRouterService.js";
 import { addChatTokenUsage } from "../utils/ChatToken.js";
 import { UpdateSummaryIfNeeded } from "../services/summaryService.js";
+import { redisClient } from "../config/redis.js";
+import dotenv from "dotenv"
+dotenv.config();
 
 // getMessage, sendMessage
 
@@ -61,17 +64,7 @@ export const sendMessage = async (req, res) => {
             })
         }
 
-        await resetUsageifNeeded(req.user);
-
-        if (hasTokenLimitReached(req.user)) {
-            return res.status(429).json({
-                message: "Token limit reached  , pls try after some time",
-                usage: req.user.usage
-            })
-        }
-
         let chat;
-
 
         if (!chatId) {
             // no chat id so we need to create one
@@ -115,14 +108,7 @@ export const sendMessage = async (req, res) => {
             chatId: chat._id,
             userId: req.user._id,
             role: "user",
-            content: content.trim(),
-            tokens: usage.prompt_token,
-
-            usage: {
-                promptTokens: usage.prompt_token,
-                completionToken: 0,
-                TotalTokens: usage.prompt_token
-            }
+            content: content.trim()
         })
 
         const assistantMessage = await msg.create({
@@ -130,14 +116,7 @@ export const sendMessage = async (req, res) => {
             userId: req.user._id,
             role: "assistant",
             content: ai_reply,
-            tokens: usage.prompt_token,
-            tokens: usage.completion_token,
-
-            usage: {
-                promptTokens: 0,
-                completionToken: usage.completion_token,
-                TotalTokens: usage.completion_token
-            }
+            usage
         })
 
 
@@ -150,13 +129,19 @@ export const sendMessage = async (req, res) => {
         await addChatTokenUsage(chat, usage);
         await addTokenUsage(req.user, usage.total_tokens);
 
+        const TokensUsed = await redisClient.incrBy(req.key, usage.total_tokens);
+
+        if (TokensUsed == usage.total_tokens) { // created first time
+            await redisClient.expire(req.key, Number(process.env.TokenTime));
+        }
 
         res.status(201).json({
             message: "message sent successfully",
             chatId: chat._id,
-            userId: req.user._id,
-            userMessage,
-            assistantMessage
+            reply: ai_reply,
+            usage,
+            TokensUsed,
+            Token_limit: Number(process.env.Token),
         })
 
         UpdateSummaryIfNeeded(chat._id);

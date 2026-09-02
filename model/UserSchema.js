@@ -23,21 +23,6 @@ const userSchema = new mongoose.Schema({
     },
 
     usage: {
-        TokenUsed: {
-            type: Number,
-            default: 0
-        },
-
-        TokenLimit: {
-            type: Number,
-            default: process.env.Token,
-        },
-
-        ResetAt: {
-            type: Date,
-            default: () => new Date(Date.now() + Number(process.env.TokenTime)),
-        },
-
         TotalTokenUsed: {
             type: Number,
             default: 0

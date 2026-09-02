@@ -65,7 +65,7 @@ export const createChat = async (req, res) => {
 
         const chat = await Chat.create({
             model,
-            userId: req.user._id
+            userId: req.userID
         })
 
         res.status(200).json({
