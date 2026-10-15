@@ -1,4 +1,4 @@
-import openRouter from "../config/openRouter.js"
+import openRouter from "../../config/openRouter.js"
 
 
 export const genAIresponse = async ({ model, messages }) => {

@@ -1,11 +1,11 @@
 import express from "express"
-import ConnectDB from "./config/database.js"
-import { connectRedis } from "./config/redis.js"
+import ConnectDB from "../config/database.js"
+import { connectRedis } from "../config/redis.js"
 import dotenv from "dotenv/config.js"
 import cookieParser from "cookie-parser"
-import userRouter from "./routes/userRouter.js"
-import msgRouter from "./routes/msgRouter.js"
-import chatRouter from "./routes/chatRouter.js"
+import userRouter from "../routes/userRouter.js"
+import msgRouter from "../routes/msgRouter.js"
+import chatRouter from "../routes/chatRouter.js"
 
 
 const app = express();
