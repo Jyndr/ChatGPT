@@ -1,46 +1,45 @@
-import * as z from "zod"
+import * as z from "zod";
 
+const emailSchema = z.preprocess(
+  (value) =>
+    typeof value === "string" ? value.trim().toLowerCase() : "",
+  z.email("Email must be valid")
+);
+
+const passwordSchema = z
+  .string()
+  .min(8, "Password must have at least 8 characters")
+  .max(30, "Password must have at most 30 characters")
+  .regex(/[A-Z]/, "Password needs an uppercase letter")
+  .regex(/[a-z]/, "Password needs a lowercase letter")
+  .regex(/[0-9]/, "Password needs a number")
+  .regex(
+    /[~?@.,<>,{}:'!^#()&-+]/,
+    "Password needs a special character"
+  );
 
 export const signupSchema = z.object({
-    name:
-        z.string()
-            .trim()
-            .min(3, "Minimum length of name should be 3")
-            .max(30, "Maximum length of name should be 30"),
+  name: z
+    .string()
+    .trim()
+    .min(3, "Name must have at least 3 characters")
+    .max(30, "Name must have at most 30 characters"),
 
-    age:
-        z.number()
-            .min(10, "Minimum age must be 10")
-            .max(100, "Maximum age must be 100")
-            .optional(),
+  age: z.preprocess(
+    (value) => {
+      if (value === "" || value === undefined || value === null) {
+        return undefined;
+      }
+      return Number(value);
+    },
+    z.number().min(10, "Minimum age is 10").max(100, "Maximum age is 100").optional()
+  ),
 
-    email: z.preprocess(
-        (value) => typeof value == "string" ? value.trim().toLowerCase() : "",
-        z.email("Email must be valid")
-    ),
-
-    password:
-        z.string()
-            .min(8, "Minimum length should be 8")
-            .max(30, "Maximum length should be 30")
-            .regex(/[A-Z]/, "Password should contain one capital letter")
-            .regex(/[a-z]/, "Password should contain one small letter")
-            .regex(/[0-9]/, "Password should contain one digit")
+  email: emailSchema,
+  password: passwordSchema,
 });
 
-
-
 export const loginSchema = z.object({
-    email: z.preprocess(
-        (value) => typeof value == "string" ? value.trim().toLowerCase() : "",
-        z.email("Email must be valid")
-    ),
-
-    password:
-        z.string()
-            .min(8, "Minimum length should be 8")
-            .max(30, "Maximum length should be 30")
-            .regex(/[A-Z]/, "Password should contain one capital letter")
-            .regex(/[a-z]/, "Password should contain one small letter")
-            .regex(/[0-9]/, "Password should contain one digit")
+  email: emailSchema,
+  password: passwordSchema,
 });

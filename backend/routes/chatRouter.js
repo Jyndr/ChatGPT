@@ -2,7 +2,7 @@ import express from "express"
 import authUserMiddleware from "../middlewares/authUserMiddleware.js";
 import { getRecentChat, getSingleChat, createChat, deleteChat } from "../controllers/ chatController.js";
 import authenticatedRateLimiter from "../middlewares/authenticatedRateLimiter.js";
-import LoadUser from "../middlewares/LoadUserMiddleware.js";
+import LoadUser from "../middlewares/LoadUserMiddleware.js"
 
 
 

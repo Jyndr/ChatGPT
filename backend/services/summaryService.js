@@ -1,7 +1,7 @@
 import Chat from "../model/ChatSchema.js"
 import Msg from "../model/msgSchema.js"
 import User from "../model/UserSchema.js"
-import { genAIresponse } from "../services/geminiRouterService.js"
+import { genAIresponse } from "./geminiRouterService.js"
 
 
 const summary_chunk_size = 20;

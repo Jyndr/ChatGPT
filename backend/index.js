@@ -1,14 +1,21 @@
 import express from "express"
-import ConnectDB from "../config/database.js"
-import { connectRedis } from "../config/redis.js"
+import ConnectDB from "./config/database.js"
+import { connectRedis } from "./config/redis.js"
 import dotenv from "dotenv/config.js"
 import cookieParser from "cookie-parser"
-import userRouter from "../routes/userRouter.js"
-import msgRouter from "../routes/msgRouter.js"
-import chatRouter from "../routes/chatRouter.js"
-
+import userRouter from "./routes/userRouter.js"
+import msgRouter from "./routes/msgRouter.js"
+import chatRouter from "./routes/chatRouter.js"
+import cors from "cors"
 
 const app = express();
+
+app.use(
+    cors({
+        origin:["http://localhost:5173","http://localhost:5174"],
+        credentials:true
+    })
+)
 
 
 app.use(express.json());

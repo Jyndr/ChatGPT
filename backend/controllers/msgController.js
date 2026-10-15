@@ -1,10 +1,10 @@
 import { z } from "zod";
 import Chat from "../model/ChatSchema.js"
 import msg from "../model/msgSchema.js"
-import { addTokenUsage } from "../backend/utils/userUsage.js";
-import { buildMessageForAi } from "../backend/utils/chatContext.js";
+import { addTokenUsage } from "../utils/userUsage.js";
+import { buildMessageForAi } from "../utils/chatContext.js";
 import { genAIresponse } from "../services/geminiRouterService.js";
-import { addChatTokenUsage } from "../backend/utils/ChatToken.js";
+import { addChatTokenUsage } from "../utils/ChatToken.js";
 import { UpdateSummaryIfNeeded } from "../services/summaryService.js";
 import { redisClient } from "../config/redis.js";
 import dotenv from "dotenv"
