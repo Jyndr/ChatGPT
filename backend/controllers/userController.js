@@ -26,10 +26,11 @@ const CreateToken = (id, email) => {
 
 const cookieOptions = {
     httpOnly: true,
-    secure: false,
-    maxAge: 1000 * 60 * 60 * 5 // bug
-}
-
+    secure: true,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 5,
+    path: "/"
+};
 
 export const SignUp = async (req, res) => {
     try {
@@ -115,8 +116,7 @@ export const login = async (req, res) => {
         res.status(200).json({
             message: "User loggedIn successfully",
             name: user.name,
-            email: user.email,
-            usage: user.usage
+            email: user.email
         })
 
     } catch (err) {
@@ -143,8 +143,10 @@ export const logout = async (req, res) => {
 
             res.clearCookie("token", {
                 httpOnly: true,
-                secure: false
-            })
+                secure: true,
+                sameSite: "none",
+                path: "/"
+            });
 
             res.status(200).json({
                 message: "User logged Out succussfully"
@@ -204,4 +206,3 @@ export const deleteAccount = async (req, res) => {
             message: "Internal Server Error"
         })
     }
-}
