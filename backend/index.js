@@ -15,7 +15,8 @@ app.use(cors({
         "https://chat-gpt-opal-mu.vercel.app",
         "https://chat-gpt-me-50f6.vercel.app",
         "https://chat-gpt-git-main-me-50f6.vercel.app",
-        "https://chat-rhy6axf14-me-50f6.vercel.app"
+        "https://chat-rhy6axf14-me-50f6.vercel.app",
+        "https://chat-73hk1vxbm-me-50f6.vercel.app"
     ],
     credentials: true
 }));
