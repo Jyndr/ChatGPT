@@ -206,3 +206,4 @@ export const deleteAccount = async (req, res) => {
             message: "Internal Server Error"
         })
     }
+}
