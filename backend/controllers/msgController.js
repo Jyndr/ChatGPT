@@ -47,6 +47,7 @@ export const getMessage = async (req, res) => {
 
 
 export const sendMessage = async (req, res) => {
+    console.log("🔥 sendMessage controller reached!");
     try {
 
         const { chatId } = req.params;
@@ -72,7 +73,7 @@ export const sendMessage = async (req, res) => {
             chat = await Chat.create({
                 userId: req.user._id,
                 model,
-                topic: content.trim().slice(0, 20)
+                Topic: content.trim().slice(0, 20)
             })
 
         } else {
@@ -102,7 +103,16 @@ export const sendMessage = async (req, res) => {
         });
 
 
-        const { ai_reply, usage } = await genAIresponse({ model, messages: msg_for_ai });
+        // console.log("⏳ Calling Gemini...");
+        // console.time("Gemini response time");
+
+        const { ai_reply, usage } = await genAIresponse({
+            model,
+            messages: msg_for_ai
+        });
+
+        // console.timeEnd("Gemini response time");
+        // console.log("✅ Gemini responded successfully");
 
         const userMessage = await msg.create({
             chatId: chat._id,

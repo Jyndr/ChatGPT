@@ -12,5 +12,7 @@ msgRouter.use(authenticatedRateLimiter);
 
 msgRouter.get("/:chatId", LoadUser, getMessage);
 msgRouter.post("/:chatId", TokenUsage, LoadUser, sendMessage);
+msgRouter.post("/", TokenUsage, LoadUser, sendMessage);
+
 
 export default msgRouter;

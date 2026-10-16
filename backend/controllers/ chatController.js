@@ -8,7 +8,7 @@ import msg from "../model/msgSchema.js"
 export const getRecentChat = async (req, res) => {
     try {
 
-        const chats = await Chat.find({ userId: req.user._id }).select("topic")
+        const chats = await Chat.find({ userId: req.user._id }).select("Topic")
             .sort({ updatedAt: -1 }).limit(20);
 
         res.status(200).json({
@@ -42,7 +42,7 @@ export const getSingleChat = async (req, res) => {
         res.status(200).json({
             chatId: chat._id,
             userId: chat.userId,
-            topic: chat.Topic
+            Topic: chat.Topic
         })
 
     } catch (error) {
@@ -71,7 +71,7 @@ export const createChat = async (req, res) => {
         res.status(200).json({
             chatid: chat._id,
             userId: chat.userId,
-            topic: chat.Topic
+            Topic: chat.Topic
         })
 
     } catch (error) {
