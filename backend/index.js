@@ -10,14 +10,26 @@ import cors from "cors"
 
 const app = express();
 
+const allowedOrigins = [
+    "https://chat-gpt-opal-mu.vercel.app",
+    "https://chat-gpt-me-50f6.vercel.app",
+    "https://chat-gpt-git-main-me-50f6.vercel.app"
+];
+
 app.use(cors({
-    origin: [
-        "https://chat-gpt-opal-mu.vercel.app",
-        "https://chat-gpt-me-50f6.vercel.app",
-        "https://chat-gpt-git-main-me-50f6.vercel.app",
-        "https://chat-rhy6axf14-me-50f6.vercel.app",
-        "https://chat-73hk1vxbm-me-50f6.vercel.app"
-    ],
+    origin: (origin, callback) => {
+        // Vercel creates a new hash-based URL for each preview deployment.
+        // Match only this project's preview hostname pattern.
+        const isProjectPreview =
+            typeof origin === "string" &&
+            /^https:\/\/chat-[a-z0-9]+-me-50f6\.vercel\.app$/.test(origin);
+
+        if (!origin || allowedOrigins.includes(origin) || isProjectPreview) {
+            callback(null, true);
+        } else {
+            callback(null, false);
+        }
+    },
     credentials: true
 }));
 
