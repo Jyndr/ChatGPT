@@ -10,13 +10,15 @@ import cors from "cors"
 
 const app = express();
 
-app.use(
-    cors({
-        origin:["http://localhost:5173","http://localhost:5174"],
-        credentials:true
-    })
-)
-
+app.use(cors({
+    origin: [
+        "https://chat-gpt-opal-mu.vercel.app",
+        "https://chat-gpt-me-50f6.vercel.app",
+        "https://chat-gpt-git-main-me-50f6.vercel.app",
+        "https://chat-rhy6axf14-me-50f6.vercel.app"
+    ],
+    credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
