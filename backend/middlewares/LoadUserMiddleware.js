@@ -5,8 +5,17 @@ const LoadUser = async (req, res, next) => {
         const user = await User.findById(req.userID);
 
         if (!user) {
-            return res.status(404).json({
-                message: "User doesn't exist"
+            // The JWT is no longer associated with an account in this
+            // database. Expire the stale session and let the client sign in.
+            res.clearCookie("token", {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+                path: "/"
+            });
+
+            return res.status(401).json({
+                message: "Session expired. Please log in again."
             });
         }
         req.user = user;
